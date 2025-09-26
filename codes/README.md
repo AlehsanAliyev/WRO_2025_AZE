@@ -50,11 +50,6 @@ Round 2 keeps everything above, and layers in a few more checks for a busier map
 | Wrong-way car (Round 2) | `rasleft` / `rasright` HIGH | Someone on the wrong side | Hug the safe side for a timed interval |
 | Blocked front (Round 2) | `rasback` HIGH | Traffic jam ahead | Reverse until clear, then resume |
 
-## If You Tweak the Code Next
-- Keep the `distance` threshold in mind when adjusting speeds. Faster forward bursts may need a higher threshold so you do not double-trigger turns.
-- The color thresholds (`map(...)` results compared against `-8000` and `-5000`) are tuned to the lighting at competition. Recalibrate if the venue lighting changes.
-- Any new avoidance move should reset `lefttimer`, `righttimer`, and `distance` so the next behavior does not get confused by stale data.
-
 ## Related Docs
 - `../README.md`  project overview, hardware snapshot, and quick links.
 - `../schemas/POWER_SENSE.md`  wiring, batteries, and signal mapping between the Pi, Nano, and motor driver.
