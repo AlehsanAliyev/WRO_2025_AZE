@@ -1,7 +1,5 @@
 # Round 1 & Round 2 Code Guide
 
-Hey teammate! Let me walk you through what the two Arduino sketches are doing and how they make the robot behave on the field.
-
 ## Common Hardware & Ideas
 - **Drive**: one DC motor (`in1`, `in2`, `en`) for forward/backward plus a servo on `servoPin` that steers the front axle.
 - **Color sensing**: the TCS3200 module on `s0`-`s3` and `out_pin` spots track colors. The helper `direction()` maps the pulse widths and returns:
@@ -32,10 +30,10 @@ Both files share that core routine; the main differences are in the sections bel
 ## Round 2 Upgrades
 Round 2 keeps everything above, and layers in a few more checks for a busier map.
 
-- **Extra "ras" sensors**: digital inputs on pins `2`, `3`, `4` act like front/left/right beacons (likely from a Raspberry Pi or ToF module). They let the bot notice opponents driving the wrong way or blocking the lane.
+- **Extra "ras" sensors**: digital inputs on pins `2`, `3`, `4` act like front/left/right beacons (from a Raspberry Pi). They let the bot notice opponents driving the wrong way or blocking the lane.
 - **Timers as memory**:
   - `lefttimer` and `righttimer` store how many 30 ms steps we spent squeezing around an obstacle. Afterwards the main loop keeps steering away for a scaled-down amount of time so the robot drifts smoothly back to the center (`round2.ino` lines 95-137).
-  - `left_obstacle_timer` and `right_obstacle_timer` count how long an IR sensor stays triggered. If either hits `30`, the code assumes we are rubbing the wall and executes a short “reverse and swing out” escape move (`round2.ino` lines 139-170).
+  - `left_obstacle_timer` and `right_obstacle_timer` count how long an IR sensor stays triggered. If either hits `30`, the code assumes we are rubbing the wall and executes a short "reverse and swing out" escape move (`round2.ino` lines 139-170).
 - **Front watchdog**: `front()` watches `rasback` (the naming is historical; it is really looking ahead). If it sees a HIGH signal, the car stops progressing, keeps the wheels straight, and backs up until the path is clear before making another attempt (`round2.ino` lines 178-188).
 - **Turn exit tweak**: after finishing the usual steer-dance, Round 2 immediately calls `backward()` with a slightly higher speed to pull the rear axle fully into the lane. That extra step makes the car settle faster before releasing control back to the main loop (`round2.ino` lines 192-242).
 
@@ -50,9 +48,4 @@ Round 2 keeps everything above, and layers in a few more checks for a busier map
 | Wrong-way car (Round 2) | `rasleft` / `rasright` HIGH | Someone on the wrong side | Hug the safe side for a timed interval |
 | Blocked front (Round 2) | `rasback` HIGH | Traffic jam ahead | Reverse until clear, then resume |
 
-## If You Tweak the Code Next
-- Keep the `distance` threshold in mind when adjusting speeds. Faster forward bursts may need a higher threshold so you do not double-trigger turns.
-- The color thresholds (`map(...)` results compared against `-8000` and `-5000`) are tuned to the lighting at competition. Recalibrate if the venue lighting changes.
-- Any new avoidance move should reset `lefttimer`, `righttimer`, and `distance` so the next behavior does not get confused by stale data.
 
-Ping me if you want to walk through specific motion timings; I sketched them all out while reading, so it is fresh in my head.
