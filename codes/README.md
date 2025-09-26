@@ -1,5 +1,7 @@
 # Round 1 & Round 2 Code Guide
 
+Let me walk you through what the two Arduino sketches are doing and how they make the robot behave on the field.
+
 ## Common Hardware & Ideas
 - **Drive**: one DC motor (`in1`, `in2`, `en`) for forward/backward plus a servo on `servoPin` that steers the front axle.
 - **Color sensing**: the TCS3200 module on `s0`-`s3` and `out_pin` spots track colors. The helper `direction()` maps the pulse widths and returns:
@@ -47,5 +49,14 @@ Round 2 keeps everything above, and layers in a few more checks for a busier map
 | Rear wall | `irback == LOW` | Something behind | Helps decide whether to escape forward or backward |
 | Wrong-way car (Round 2) | `rasleft` / `rasright` HIGH | Someone on the wrong side | Hug the safe side for a timed interval |
 | Blocked front (Round 2) | `rasback` HIGH | Traffic jam ahead | Reverse until clear, then resume |
+
+## If You Tweak the Code Next
+- Keep the `distance` threshold in mind when adjusting speeds. Faster forward bursts may need a higher threshold so you do not double-trigger turns.
+- The color thresholds (`map(...)` results compared against `-8000` and `-5000`) are tuned to the lighting at competition. Recalibrate if the venue lighting changes.
+- Any new avoidance move should reset `lefttimer`, `righttimer`, and `distance` so the next behavior does not get confused by stale data.
+
+## Related Docs
+- `../README.md`  project overview, hardware snapshot, and quick links.
+- `../schemas/POWER_SENSE.md`  wiring, batteries, and signal mapping between the Pi, Nano, and motor driver.
 
 
